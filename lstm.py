@@ -27,10 +27,10 @@ def load_data(filename, seq_len, normalise_window):
     data = f.split('\n')
 
     sequence_length = seq_len + 1
-    result = []
-    for index in range(len(data) - sequence_length):
-        result.append(data[index: index + sequence_length])
-    
+    result = [
+        data[index : index + sequence_length]
+        for index in range(len(data) - sequence_length)
+    ]
     if normalise_window:
         result = normalise_windows(result)
 
@@ -89,7 +89,7 @@ def predict_sequence_full(model, data, window_size):
     #Shift the window by 1 new prediction each time, re-run predictions on new window
     curr_frame = data[0]
     predicted = []
-    for i in xrange(len(data)):
+    for _ in xrange(len(data)):
         predicted.append(model.predict(curr_frame[newaxis,:,:])[0,0])
         curr_frame = curr_frame[1:]
         curr_frame = np.insert(curr_frame, [window_size-1], predicted[-1], axis=0)
@@ -101,7 +101,7 @@ def predict_sequences_multiple(model, data, window_size, prediction_len):
     for i in xrange(len(data)/prediction_len):
         curr_frame = data[i*prediction_len]
         predicted = []
-        for j in xrange(prediction_len):
+        for _ in xrange(prediction_len):
             predicted.append(model.predict(curr_frame[newaxis,:,:])[0,0])
             curr_frame = curr_frame[1:]
             curr_frame = np.insert(curr_frame, [window_size-1], predicted[-1], axis=0)
